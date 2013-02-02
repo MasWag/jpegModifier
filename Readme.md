@@ -1,4 +1,4 @@
-jpgModifier
+jpegModifier
 ===========================================
 This program modifies SOI and EOI of jpeg file.
 
