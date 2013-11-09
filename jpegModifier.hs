@@ -8,19 +8,15 @@ main = do
     then putStrLn "Error! Usage : jpgCheck filename"
     else do
     contents <- B.readFile (head args)
-    if jpgCheck $ B.unpack contents then
+    if jpgCheck contents then
       putStrLn "input jpeg file was valid!"
       else do
-      B.writeFile ((head args) ++ ".modified.jpeg") $ (if checkSOI $ B.unpack contents then \x->x else addSOI) ( ( if checkEOI $ B.unpack contents then \x->x else addEOI ) contents)
-      putStrLn $ "output as" ++  ((head args) ++ ".modified.jpeg")
+      B.writeFile ((head args) ++ ".modified.jpeg") $ (if checkSOI contents then \x->x else addSOI) ( ( if checkEOI contents then \x->x else addEOI ) contents)
+      putStrLn $ "output as " ++  ((head args) ++ ".modified.jpeg")
 
-checkSOI (x:[]) = False
-checkSOI (x:x':_) = x == 0xFF && x' == 0xD8
+checkSOI xs = ( B.head xs ) == 0xFF && (B.head ( B.tail contents)) == 0xD8
 
-checkEOI (x:[]) = False
-checkEOI xs = checkEOI' $ reverse xs
-    where
-        checkEOI' (x:x':_) = x == 0xD9 && x' == 0xFF
+checkEOI xs = ( B.last xs ) == 0xD9 && (B.last ( B.init contents)) == 0xFF
 
 jpgCheck xs = checkSOI xs && checkEOI xs
 
