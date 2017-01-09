@@ -14,9 +14,8 @@ main = do
       B.writeFile ((head args) ++ ".modified.jpeg") $ (if checkSOI contents then \x->x else addSOI) ( ( if checkEOI contents then \x->x else addEOI ) contents)
       putStrLn $ "output as " ++  ((head args) ++ ".modified.jpeg")
 
-checkSOI xs = ( B.head xs ) == 0xFF && (B.head ( B.tail contents)) == 0xD8
-
-checkEOI xs = ( B.last xs ) == 0xD9 && (B.last ( B.init contents)) == 0xFF
+checkSOI xs = ( B.head xs ) == 0xFF && (B.head ( B.tail xs)) == 0xD8
+checkEOI xs = ( B.last xs ) == 0xD9 && (B.last ( B.init xs)) == 0xFF
 
 jpgCheck xs = checkSOI xs && checkEOI xs
 
